@@ -1,0 +1,62 @@
+<mat-toolbar color="primary" class="dashboard-toolbar">
+  <mat-icon>dashboard</mat-icon>
+  <span class="toolbar-title">Tableau de Bord Admin - Transactions</span>
+</mat-toolbar>
+
+<div class="dashboard-container">
+  <div class="stats-container">
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-icon class="stat-icon total">account_balance_wallet</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-value">{{ stats.total }}</div>
+        <div class="stat-label">Total Transactions</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-icon class="stat-icon completed">check_circle</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-value">{{ stats.completed }}</div>
+        <div class="stat-label">Complétées</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-icon class="stat-icon pending">schedule</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-value">{{ stats.pending }}</div>
+        <div class="stat-label">En Attente</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-icon class="stat-icon failed">error</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-value">{{ stats.failed }}</div>
+        <div class="stat-label">Échouées</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card amount-card">
+      <mat-card-header>
+        <mat-icon class="stat-icon amount">euro</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-value">{{ stats.totalAmount | number: '1.2-2' }} €</div>
+        <div class="stat-label">Montant Total (Complétées)</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="transactions-section">
+    <app-transaction-list></app-transaction-list>
+  </div>
+</div>
