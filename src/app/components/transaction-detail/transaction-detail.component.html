@@ -1,0 +1,125 @@
+<mat-toolbar color="primary" class="detail-toolbar">
+  <button mat-icon-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span class="toolbar-title">Détails de la Transaction</span>
+</mat-toolbar>
+
+<div class="detail-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Chargement des détails...</p>
+  </div>
+
+  <div *ngIf="!loading && notFound" class="not-found-container">
+    <mat-card>
+      <mat-card-content>
+        <div class="not-found-content">
+          <mat-icon>error_outline</mat-icon>
+          <h2>Transaction introuvable</h2>
+          <p>La transaction demandée n'existe pas ou a été supprimée.</p>
+          <button mat-raised-button color="primary" (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+            Retour au tableau de bord
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div *ngIf="!loading && !notFound && transaction" class="transaction-details">
+    <mat-card class="header-card">
+      <mat-card-content>
+        <div class="transaction-header">
+          <div class="header-left">
+            <h1>{{ transaction.reference }}</h1>
+            <p class="transaction-id">ID: {{ transaction.id }}</p>
+          </div>
+          <div class="header-right">
+            <mat-chip [class]="getStatusClass(transaction.status)" class="large-chip">
+              {{ getStatusLabel(transaction.status) }}
+            </mat-chip>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="details-grid">
+      <mat-card class="info-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>info</mat-icon>
+            Informations générales
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-row">
+            <span class="info-label">Type de transaction</span>
+            <mat-chip [class]="getTypeClass(transaction.type)">
+              {{ getTypeLabel(transaction.type) }}
+            </mat-chip>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="info-row">
+            <span class="info-label">Montant</span>
+            <span class="info-value amount">{{ transaction.amount | number: '1.2-2' }} {{ transaction.currency }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="info-row">
+            <span class="info-label">Date et heure</span>
+            <span class="info-value">{{ transaction.date | date: 'dd/MM/yyyy à HH:mm:ss' }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="info-row">
+            <span class="info-label">Méthode de paiement</span>
+            <span class="info-value">{{ transaction.paymentMethod }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="info-row">
+            <span class="info-label">Description</span>
+            <span class="info-value">{{ transaction.description }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="info-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>person</mat-icon>
+            Informations client
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-row">
+            <span class="info-label">Nom</span>
+            <span class="info-value">{{ transaction.customer.name }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="info-row">
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ transaction.customer.email }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <mat-card class="actions-card">
+      <mat-card-content>
+        <div class="action-buttons">
+          <button mat-raised-button color="primary" (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+            Retour à la liste
+          </button>
+          <button mat-raised-button color="accent">
+            <mat-icon>print</mat-icon>
+            Imprimer
+          </button>
+          <button mat-raised-button>
+            <mat-icon>download</mat-icon>
+            Télécharger PDF
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

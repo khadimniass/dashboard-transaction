@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
@@ -12,6 +13,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
 import {
   Transaction,
   TransactionType,
@@ -37,6 +40,8 @@ import { TransactionService } from '../../services/transaction.service';
     MatChipsModule,
     MatCardModule,
     MatProgressSpinnerModule,
+    MatMenuModule,
+    MatDividerModule,
   ],
   templateUrl: './transaction-list.component.html',
   styleUrl: './transaction-list.component.css',
@@ -51,6 +56,7 @@ export class TransactionListComponent implements OnInit {
     'status',
     'paymentMethod',
     'reference',
+    'actions',
   ];
 
   dataSource: MatTableDataSource<Transaction>;
@@ -69,7 +75,10 @@ export class TransactionListComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private transactionService: TransactionService) {
+  constructor(
+    private transactionService: TransactionService,
+    private router: Router
+  ) {
     this.dataSource = new MatTableDataSource<Transaction>([]);
   }
 
@@ -151,5 +160,24 @@ export class TransactionListComponent implements OnInit {
       [TransactionType.DEPOSIT]: 'Dépôt',
     };
     return labels[type];
+  }
+
+  viewDetails(transaction: Transaction) {
+    this.router.navigate(['/dashboard', transaction.reference]);
+  }
+
+  editTransaction(transaction: Transaction) {
+    console.log('Edit transaction:', transaction);
+    // TODO: Implement edit functionality
+  }
+
+  downloadReceipt(transaction: Transaction) {
+    console.log('Download receipt for:', transaction);
+    // TODO: Implement download functionality
+  }
+
+  deleteTransaction(transaction: Transaction) {
+    console.log('Delete transaction:', transaction);
+    // TODO: Implement delete functionality
   }
 }

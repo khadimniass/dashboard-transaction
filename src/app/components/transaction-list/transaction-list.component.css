@@ -160,6 +160,23 @@ code {
   margin: 0;
 }
 
+/* Actions menu */
+.actions-button {
+  color: #666;
+}
+
+.actions-button:hover {
+  color: #3f51b5;
+}
+
+.delete-action {
+  color: #f44336;
+}
+
+.delete-action mat-icon {
+  color: #f44336;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .filter-container {

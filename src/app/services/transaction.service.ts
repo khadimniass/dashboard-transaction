@@ -238,6 +238,11 @@ export class TransactionService {
     return of(transaction).pipe(delay(200));
   }
 
+  getTransactionByReference(reference: string): Observable<Transaction | undefined> {
+    const transaction = this.mockTransactions.find((t) => t.reference === reference);
+    return of(transaction).pipe(delay(200));
+  }
+
   getTransactionStats(): Observable<{
     total: number;
     pending: number;
