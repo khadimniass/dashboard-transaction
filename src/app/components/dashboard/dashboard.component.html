@@ -1,6 +1,24 @@
 <mat-toolbar color="primary" class="dashboard-toolbar">
   <mat-icon>dashboard</mat-icon>
   <span class="toolbar-title">Tableau de Bord Admin - Transactions</span>
+  <span class="spacer"></span>
+  <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-button">
+    <mat-icon>admin_panel_settings</mat-icon>
+    <span>{{ user?.name }}</span>
+    <mat-icon>arrow_drop_down</mat-icon>
+  </button>
+  <mat-menu #userMenu="matMenu">
+    <div class="user-info">
+      <p><strong>{{ user?.name }}</strong></p>
+      <p class="user-email">{{ user?.email }}</p>
+      <p class="user-role">Administrateur</p>
+    </div>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Déconnexion</span>
+    </button>
+  </mat-menu>
 </mat-toolbar>
 
 <div class="dashboard-container">
@@ -47,10 +65,10 @@
 
     <mat-card class="stat-card amount-card">
       <mat-card-header>
-        <mat-icon class="stat-icon amount">euro</mat-icon>
+        <mat-icon class="stat-icon amount">monetization_on</mat-icon>
       </mat-card-header>
       <mat-card-content>
-        <div class="stat-value">{{ stats.totalAmount | number: '1.2-2' }} €</div>
+        <div class="stat-value">{{ stats.totalAmount | number: '1.0-0' }}</div>
         <div class="stat-label">Montant Total (Complétées)</div>
       </mat-card-content>
     </mat-card>

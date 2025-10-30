@@ -1,0 +1,96 @@
+<mat-toolbar color="primary" class="user-toolbar">
+  <mat-icon>account_balance_wallet</mat-icon>
+  <span class="toolbar-title">Mes Transactions</span>
+  <span class="spacer"></span>
+  <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-button">
+    <mat-icon>account_circle</mat-icon>
+    <span>{{ user?.name }}</span>
+    <mat-icon>arrow_drop_down</mat-icon>
+  </button>
+  <mat-menu #userMenu="matMenu">
+    <div class="user-info">
+      <p><strong>{{ user?.name }}</strong></p>
+      <p class="user-email">{{ user?.email }}</p>
+      <p class="user-role">Utilisateur</p>
+    </div>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Déconnexion</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>
+
+<div class="user-container">
+  <div class="welcome-section">
+    <h1>Bienvenue, {{ user?.name }}!</h1>
+    <p>Voici un résumé de vos transactions récentes</p>
+  </div>
+
+  <div class="stats-cards">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <mat-icon class="stat-icon">check_circle</mat-icon>
+        <div class="stat-value">{{ stats.total }}</div>
+        <div class="stat-label">Transactions complétées</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card amount-card">
+      <mat-card-content>
+        <mat-icon class="stat-icon">euro</mat-icon>
+        <div class="stat-value">{{ stats.totalAmount | number: '1.2-2' }}</div>
+        <div class="stat-label">Montant total</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card class="transactions-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>receipt_long</mat-icon>
+        Dernières transactions
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="loading" class="loading">
+        <p>Chargement...</p>
+      </div>
+
+      <div *ngIf="!loading && transactions.length === 0" class="no-transactions">
+        <mat-icon>info</mat-icon>
+        <p>Aucune transaction disponible</p>
+      </div>
+
+      <div *ngIf="!loading && transactions.length > 0" class="transactions-list">
+        <div *ngFor="let transaction of transactions" class="transaction-item">
+          <div class="transaction-icon">
+            <mat-icon [class]="getTypeClass(transaction.type)">
+              {{
+                transaction.type === 'PAYMENT' ? 'payment' :
+                transaction.type === 'REFUND' ? 'undo' :
+                transaction.type === 'TRANSFER' ? 'swap_horiz' :
+                transaction.type === 'WITHDRAWAL' ? 'arrow_upward' :
+                'arrow_downward'
+              }}
+            </mat-icon>
+          </div>
+          <div class="transaction-info">
+            <div class="transaction-header">
+              <strong>{{ transaction.description }}</strong>
+              <span class="transaction-amount">
+                {{ transaction.amount | number: '1.2-2' }} {{ transaction.currency }}
+              </span>
+            </div>
+            <div class="transaction-details">
+              <span class="transaction-date">{{ transaction.date | date: 'dd/MM/yyyy à HH:mm' }}</span>
+              <mat-chip [class]="getTypeClass(transaction.type)" class="small-chip">
+                {{ getTypeLabel(transaction.type) }}
+              </mat-chip>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

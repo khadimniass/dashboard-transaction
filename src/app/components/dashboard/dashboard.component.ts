@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
 import { TransactionService } from '../../services/transaction.service';
+import { AuthService } from '../../services/auth.service';
 import { TransactionListComponent } from '../transaction-list/transaction-list.component';
 
 @Component({
@@ -16,12 +20,16 @@ import { TransactionListComponent } from '../transaction-list/transaction-list.c
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
+    MatMenuModule,
+    MatDividerModule,
     TransactionListComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent implements OnInit {
+  user: any;
+
   stats = {
     total: 0,
     pending: 0,
@@ -32,9 +40,14 @@ export class DashboardComponent implements OnInit {
 
   loading = true;
 
-  constructor(private transactionService: TransactionService) {}
+  constructor(
+    private transactionService: TransactionService,
+    public authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
+    this.user = this.authService.currentUserValue;
     this.loadStats();
   }
 
@@ -50,5 +63,10 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
