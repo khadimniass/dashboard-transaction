@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 import { User, UserRole, LoginCredentials, AuthResponse } from '../models/user.model';
@@ -9,6 +10,7 @@ import { User, UserRole, LoginCredentials, AuthResponse } from '../models/user.m
 export class AuthService {
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
+  private isBrowser: boolean;
 
   // Mock users for demonstration
   private mockUsers: User[] = [
@@ -26,11 +28,16 @@ export class AuthService {
     },
   ];
 
-  constructor() {
-    const storedUser = localStorage.getItem('currentUser');
-    this.currentUserSubject = new BehaviorSubject<User | null>(
-      storedUser ? JSON.parse(storedUser) : null
-    );
+  constructor(@Inject(PLATFORM_ID) platformId: object) {
+    this.isBrowser = isPlatformBrowser(platformId);
+
+    let storedUser = null;
+    if (this.isBrowser) {
+      const storedUserString = localStorage.getItem('currentUser');
+      storedUser = storedUserString ? JSON.parse(storedUserString) : null;
+    }
+
+    this.currentUserSubject = new BehaviorSubject<User | null>(storedUser);
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
@@ -55,18 +62,22 @@ export class AuthService {
       token: mockToken,
     };
 
-    // Store user in localStorage
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    localStorage.setItem('token', mockToken);
+    // Store user in localStorage (only in browser)
+    if (this.isBrowser) {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      localStorage.setItem('token', mockToken);
+    }
     this.currentUserSubject.next(user);
 
     return of(authResponse).pipe(delay(800));
   }
 
   logout(): void {
-    // Remove user from localStorage
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('token');
+    // Remove user from localStorage (only in browser)
+    if (this.isBrowser) {
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('token');
+    }
     this.currentUserSubject.next(null);
   }
 
@@ -87,6 +98,9 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    if (this.isBrowser) {
+      return localStorage.getItem('token');
+    }
+    return null;
   }
 }
