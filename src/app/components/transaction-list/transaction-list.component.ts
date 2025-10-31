@@ -22,6 +22,7 @@ import {
   TransactionFilter,
 } from '../../models/transaction.model';
 import { TransactionService } from '../../services/transaction.service';
+import { ExportService } from '../../services/export.service';
 
 @Component({
   selector: 'app-transaction-list',
@@ -77,6 +78,7 @@ export class TransactionListComponent implements OnInit {
 
   constructor(
     private transactionService: TransactionService,
+    private exportService: ExportService,
     private router: Router
   ) {
     this.dataSource = new MatTableDataSource<Transaction>([]);
@@ -179,5 +181,20 @@ export class TransactionListComponent implements OnInit {
   deleteTransaction(transaction: Transaction) {
     console.log('Delete transaction:', transaction);
     // TODO: Implement delete functionality
+  }
+
+  exportToPDF() {
+    const filename = `transactions_${new Date().toISOString().split('T')[0]}.pdf`;
+    this.exportService.exportToPDF(this.transactions, filename);
+  }
+
+  exportToExcel() {
+    const filename = `transactions_${new Date().toISOString().split('T')[0]}.xlsx`;
+    this.exportService.exportToExcel(this.transactions, filename);
+  }
+
+  exportToCSV() {
+    const filename = `transactions_${new Date().toISOString().split('T')[0]}.csv`;
+    this.exportService.exportToCSV(this.transactions, filename);
   }
 }

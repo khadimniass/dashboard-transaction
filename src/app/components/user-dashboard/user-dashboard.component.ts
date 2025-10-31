@@ -11,6 +11,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../services/auth.service';
 import { TransactionService } from '../../services/transaction.service';
+import { ExportService } from '../../services/export.service';
 import { Transaction, TransactionStatus, TransactionType } from '../../models/transaction.model';
 
 @Component({
@@ -43,6 +44,7 @@ export class UserDashboardComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private transactionService: TransactionService,
+    private exportService: ExportService,
     private router: Router
   ) {}
 
@@ -115,6 +117,21 @@ export class UserDashboardComponent implements OnInit {
       [TransactionType.DEPOSIT]: 'Dépôt',
     };
     return labels[type];
+  }
+
+  exportToPDF() {
+    const filename = `mes_transactions_${new Date().toISOString().split('T')[0]}.pdf`;
+    this.exportService.exportToPDF(this.transactions, filename);
+  }
+
+  exportToExcel() {
+    const filename = `mes_transactions_${new Date().toISOString().split('T')[0]}.xlsx`;
+    this.exportService.exportToExcel(this.transactions, filename);
+  }
+
+  exportToCSV() {
+    const filename = `mes_transactions_${new Date().toISOString().split('T')[0]}.csv`;
+    this.exportService.exportToCSV(this.transactions, filename);
   }
 
   logout() {
