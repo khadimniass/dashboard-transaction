@@ -8,7 +8,6 @@ import { adminGuard, userGuard } from './guards/role.guard';
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  /*
   {
     path: 'admin',
     canActivate: [adminGuard],
@@ -17,20 +16,6 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'dashboard/:reference', component: TransactionDetailComponent },
     ],
-  },
-  */
- {
-  path: 'admin',
-  canActivate: [adminGuard],
-  children: [
-    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-    { path: 'dashboard', component: DashboardComponent },
-    {
-      path: 'dashboard/:reference',
-      component: TransactionDetailComponent,
-      data: { renderMode: 'server' } // 🔹 Désactive le prerender pour cette route
-    },
-  ],
   },
   {
     path: 'user',
