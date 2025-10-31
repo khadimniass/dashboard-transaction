@@ -79,11 +79,25 @@ Remplacez `[votre-username]` par votre nom d'utilisateur GitHub.
 
 ## Configuration Angular
 
-La configuration de build dans `angular.json` inclut:
+La configuration de build `github-pages` dans `angular.json` inclut:
 
+- **Output mode**: `static` pour générer des fichiers statiques compatibles avec GitHub Pages
 - **Optimisation des fonts**: Désactivée pour éviter les erreurs 403 de Google Fonts
 - **Base href**: `/dashboard-transaction/` pour correspondre au nom du dépôt
-- **Output mode**: SSR (Server-Side Rendering) compatible avec le déploiement statique
+- **Budgets augmentés**: 2MB/3MB pour accommoder les bibliothèques d'export (jsPDF, xlsx)
+- **CommonJS dependencies**: Liste des dépendances autorisées pour éviter les warnings
+
+## Test Local Avant Déploiement
+
+Avant de pousser sur la branche `deploy`, testez que le build GitHub Pages fonctionne :
+
+```bash
+# Tester le build avec la configuration GitHub Pages
+npm run build -- --configuration github-pages --base-href "/dashboard-transaction/"
+
+# Si le build réussit, vous verrez:
+# "Application bundle generation complete."
+```
 
 ## Processus de Développement Recommandé
 
@@ -95,11 +109,10 @@ git add .
 git commit -m "Description de vos modifications"
 git push origin feature/ma-nouvelle-fonctionnalite
 
-# 2. Testez localement
-npm run build
-npm start
+# 2. Testez localement le build GitHub Pages
+npm run build -- --configuration github-pages --base-href "/dashboard-transaction/"
 
-# 3. Fusionnez dans la branche principale (main/master)
+# 3. Si le test réussit, fusionnez dans la branche principale (main/master)
 git checkout main
 git merge feature/ma-nouvelle-fonctionnalite
 git push origin main
@@ -121,22 +134,67 @@ Après avoir poussé sur la branche `deploy`:
 
 ## Résolution des Problèmes
 
+### Erreur: "bundle initial exceeded maximum budget"
+
+**Solution**: La configuration `github-pages` a des budgets augmentés (2MB/3MB). Assurez-vous d'utiliser:
+```bash
+npm run build -- --configuration github-pages
+```
+Au lieu de `--configuration production`.
+
+### Erreur: "getPrerenderParams is missing"
+
+**Cause**: Route avec paramètres (`:reference`) en mode prerender.
+
+**Solution**: Le fichier `src/app/app.routes.server.ts` configure maintenant les routes paramétrées avec `RenderMode.Client`:
+```typescript
+{
+  path: 'admin/dashboard/:reference',
+  renderMode: RenderMode.Client
+}
+```
+
+### Erreur: "Inlining of fonts failed" (403)
+
+**Solution**: La configuration `github-pages` désactive l'optimisation des fonts:
+```json
+"optimization": {
+  "fonts": false
+}
+```
+
+### Warnings: "Module is not ESM"
+
+**Solution**: Les dépendances CommonJS sont autorisées dans `angular.json`:
+```json
+"allowedCommonJsDependencies": [
+  "file-saver",
+  "@babel/runtime",
+  "core-js",
+  "raf",
+  "rgbcolor"
+]
+```
+
 ### Le déploiement échoue
 
 - Vérifiez les logs dans l'onglet **Actions**
 - Assurez-vous que GitHub Pages est activé dans les paramètres
 - Vérifiez que les permissions sont correctement configurées
+- Testez le build localement avant de pousser
 
 ### L'application ne charge pas correctement
 
-- Vérifiez que le `base-href` dans `angular.json` correspond au nom de votre dépôt
+- Vérifiez que le `base-href` correspond au nom de votre dépôt
 - Vérifiez les chemins des ressources dans la console du navigateur
 - Assurez-vous que tous les fichiers nécessaires ont été déployés
+- Videz le cache du navigateur (Ctrl+Shift+R)
 
 ### Les icônes Material ne s'affichent pas
 
 - Vérifiez que le lien Google Fonts est présent dans `src/index.html`
 - Videz le cache de votre navigateur
+- Vérifiez la console pour des erreurs de chargement de ressources
 
 ## Commandes Utiles
 
