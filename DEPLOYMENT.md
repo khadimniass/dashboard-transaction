@@ -12,23 +12,56 @@ Ce guide explique comment déployer l'application Dashboard Transaction sur GitH
    - **Source**: GitHub Actions
 4. Sauvegardez les modifications
 
-### 2. Créer la branche de déploiement
+### 2. Choisir votre Stratégie de Déploiement
 
-La branche `deploy` est utilisée pour déclencher le déploiement automatique. Créez-la à partir de votre branche principale:
+**Option A : Déploiement depuis la branche principale (Configuration actuelle)**
+
+Le workflow actuel est configuré pour se déclencher automatiquement lors d'un push sur `main` ou `master`. Aucune configuration supplémentaire nécessaire.
 
 ```bash
-# Créer la branche deploy
-git checkout -b deploy
-
-# Pousser la branche vers GitHub
-git push -u origin deploy
+# Le déploiement se fait automatiquement quand vous poussez sur main
+git push origin main
 ```
+
+**Option B : Utiliser une branche dédiée `deploy`**
+
+Si vous préférez utiliser une branche dédiée pour le déploiement :
+
+1. **Configurez les règles de déploiement** :
+   - Allez dans **Settings** → **Environments** → **github-pages**
+   - Sous **Deployment branches**, sélectionnez **Selected branches**
+   - Cliquez sur **Add deployment branch rule**
+   - Ajoutez `deploy` comme règle
+   - Sauvegardez
+
+2. **Activez le workflow pour la branche deploy** :
+   - Renommez `.github/workflows/deploy-from-deploy-branch.yml.example` en `deploy-from-deploy-branch.yml`
+   - Supprimez ou désactivez `.github/workflows/deploy.yml`
+
+3. **Créez et utilisez la branche** :
+   ```bash
+   git checkout -b deploy
+   git push -u origin deploy
+   ```
 
 ## Déploiement Automatique
 
 ### Comment déclencher un déploiement
 
-Le déploiement se fait automatiquement à chaque fois que vous poussez des modifications sur la branche `deploy`:
+**Avec l'Option A (branche principale)** :
+
+Le déploiement se fait automatiquement à chaque push sur `main` :
+
+```bash
+git checkout main
+git add .
+git commit -m "Vos modifications"
+git push origin main
+```
+
+**Avec l'Option B (branche deploy)** :
+
+Le déploiement se fait automatiquement à chaque push sur `deploy` :
 
 ```bash
 # Méthode 1: Fusionner votre branche de travail dans deploy
@@ -133,6 +166,31 @@ Après avoir poussé sur la branche `deploy`:
 4. Visitez l'URL de votre application
 
 ## Résolution des Problèmes
+
+### Erreur: "Branch is not allowed to deploy to github-pages due to environment protection rules"
+
+**Cause**: GitHub bloque le déploiement car la branche n'est pas autorisée dans les règles de protection de l'environnement.
+
+**Solutions** :
+
+1. **Solution Rapide - Utiliser la branche principale** (Recommandé) :
+   - Le workflow actuel est maintenant configuré pour `main`/`master`
+   - Fusionnez vos changements dans `main` et poussez
+   - Le déploiement se fera automatiquement
+
+2. **Solution Alternative - Autoriser la branche deploy** :
+   - Allez dans **Settings** → **Environments** → **github-pages**
+   - Sous **Deployment branches**, cliquez sur le menu déroulant
+   - Sélectionnez **Selected branches**
+   - Cliquez sur **Add deployment branch rule**
+   - Ajoutez `deploy` comme règle
+   - Sauvegardez et réessayez le déploiement
+
+3. **Solution Manuelle** :
+   - Allez dans **Actions** → **Deploy to GitHub Pages**
+   - Cliquez sur **Run workflow**
+   - Sélectionnez votre branche actuelle
+   - Cliquez sur **Run workflow**
 
 ### Erreur: "bundle initial exceeded maximum budget"
 

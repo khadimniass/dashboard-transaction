@@ -1,10 +1,16 @@
-name: Deploy to GitHub Pages
+name: Deploy to GitHub Pages (from deploy branch)
+
+# INSTRUCTIONS:
+# Si vous voulez utiliser une branche 'deploy' dédiée, renommez ce fichier en:
+# deploy.yml
+#
+# Puis configurez les règles de déploiement dans GitHub:
+# Settings → Environments → github-pages → Deployment branches → Add 'deploy'
 
 on:
   push:
     branches:
-      - main  # Déclenche le déploiement lors d'un push sur la branche 'main'
-      - master  # Alternative si votre branche principale s'appelle 'master'
+      - deploy  # Déclenche le déploiement lors d'un push sur la branche 'deploy'
   workflow_dispatch:  # Permet de déclencher manuellement le workflow
 
 # Définit les permissions nécessaires pour le déploiement
