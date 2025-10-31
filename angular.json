@@ -57,6 +57,37 @@
                 "fonts": false
               }
             },
+            "github-pages": {
+              "outputMode": "static",
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2MB",
+                  "maximumError": "3MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kB",
+                  "maximumError": "10kB"
+                }
+              ],
+              "outputHashing": "all",
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": false
+              },
+              "allowedCommonJsDependencies": [
+                "file-saver",
+                "@babel/runtime",
+                "core-js",
+                "raf",
+                "rgbcolor"
+              ]
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
