@@ -50,6 +50,22 @@
       </button>
     </div>
 
+    <div class="export-container">
+      <span class="export-label">Exporter:</span>
+      <button mat-raised-button color="accent" (click)="exportToPDF()" [disabled]="transactions.length === 0">
+        <mat-icon>picture_as_pdf</mat-icon>
+        PDF
+      </button>
+      <button mat-raised-button color="accent" (click)="exportToExcel()" [disabled]="transactions.length === 0">
+        <mat-icon>table_chart</mat-icon>
+        Excel
+      </button>
+      <button mat-raised-button color="accent" (click)="exportToCSV()" [disabled]="transactions.length === 0">
+        <mat-icon>description</mat-icon>
+        CSV
+      </button>
+    </div>
+
     <div *ngIf="loading" class="loading-container">
       <mat-spinner></mat-spinner>
     </div>
