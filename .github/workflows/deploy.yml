@@ -34,7 +34,7 @@ jobs:
         run: npm ci
 
       - name: Build Angular application
-        run: npm run build -- --configuration production --base-href "/dashboard-transaction/"
+        run: npm run build -- --configuration github-pages --base-href "/dashboard-transaction/"
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
 
