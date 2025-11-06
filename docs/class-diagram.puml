@@ -1,0 +1,248 @@
+@startuml Dashboard Transaction - Class Diagram
+
+!define LIGHTBLUE #E3F2FD
+!define LIGHTGREEN #E8F5E9
+!define LIGHTYELLOW #FFF9C4
+!define LIGHTPINK #FCE4EC
+
+' ====================================
+' MODÈLES - TRANSACTION
+' ====================================
+
+package "Transaction Models" LIGHTBLUE {
+
+    interface Transaction {
+        + id: string
+        + date: Date
+        + amount: number
+        + currency: string
+        + type: TransactionType
+        + status: TransactionStatus
+        + description: string
+        + customer: Customer
+        + paymentMethod: string
+        + reference: string
+    }
+
+    class Customer {
+        + name: string
+        + email: string
+    }
+
+    enum TransactionType {
+        PAYMENT
+        REFUND
+        TRANSFER
+        WITHDRAWAL
+        DEPOSIT
+    }
+
+    enum TransactionStatus {
+        PENDING
+        COMPLETED
+        FAILED
+        CANCELLED
+    }
+
+    interface TransactionFilter {
+        + status?: TransactionStatus
+        + type?: TransactionType
+        + dateFrom?: Date
+        + dateTo?: Date
+        + searchTerm?: string
+    }
+
+    Transaction *-- Customer : contient
+    Transaction --> TransactionType : utilise
+    Transaction --> TransactionStatus : utilise
+    TransactionFilter ..> TransactionType : filtre par
+    TransactionFilter ..> TransactionStatus : filtre par
+}
+
+' ====================================
+' MODÈLES - UTILISATEUR
+' ====================================
+
+package "User Models" LIGHTGREEN {
+
+    interface User {
+        + id: string
+        + email: string
+        + name: string
+        + role: UserRole
+        + avatar?: string
+    }
+
+    enum UserRole {
+        ADMIN
+        USER
+    }
+
+    interface LoginCredentials {
+        + email: string
+        + password: string
+    }
+
+    interface AuthResponse {
+        + user: User
+        + token: string
+    }
+
+    User --> UserRole : a un
+    AuthResponse *-- User : contient
+    LoginCredentials ..> User : authentifie
+}
+
+' ====================================
+' SERVICES
+' ====================================
+
+package "Services" LIGHTYELLOW {
+
+    class TransactionService <<Injectable>> {
+        - mockTransactions: Transaction[]
+        --
+        + constructor()
+        + getTransactions(filter?: TransactionFilter): Observable<Transaction[]>
+        + getTransactionById(id: string): Observable<Transaction | undefined>
+        + getTransactionByReference(reference: string): Observable<Transaction | undefined>
+        + getTransactionStats(): Observable<TransactionStats>
+    }
+
+    class AuthService <<Injectable>> {
+        - currentUserSubject: BehaviorSubject<User | null>
+        - mockUsers: User[]
+        - isBrowser: boolean
+        + currentUser: Observable<User | null>
+        --
+        + constructor(platformId: object)
+        + get currentUserValue(): User | null
+        + login(credentials: LoginCredentials): Observable<AuthResponse>
+        + logout(): void
+        + isAuthenticated(): boolean
+        + isAdmin(): boolean
+        + isUser(): boolean
+        + hasRole(role: UserRole): boolean
+        + getToken(): string | null
+    }
+
+    class ExportService <<Injectable>> {
+        + constructor()
+        --
+        + exportToPDF(transactions: Transaction[], filename: string): void
+        + exportToExcel(transactions: Transaction[], filename: string): void
+        + exportToCSV(transactions: Transaction[], filename: string): void
+        - getStatusLabel(status: TransactionStatus): string
+        - getTypeLabel(type: TransactionType): string
+    }
+
+    class TransactionStats {
+        + total: number
+        + pending: number
+        + completed: number
+        + failed: number
+        + totalAmount: number
+    }
+
+    TransactionService ..> Transaction : gère
+    TransactionService ..> TransactionFilter : utilise
+    TransactionService ..> TransactionStats : retourne
+
+    AuthService ..> User : gère
+    AuthService ..> LoginCredentials : utilise
+    AuthService ..> AuthResponse : retourne
+    AuthService ..> UserRole : vérifie
+
+    ExportService ..> Transaction : exporte
+    ExportService ..> TransactionStatus : formate
+    ExportService ..> TransactionType : formate
+}
+
+' ====================================
+' COMPOSANTS (Optionnel - pour contexte)
+' ====================================
+
+package "Components" LIGHTPINK {
+
+    class DashboardComponent {
+        + transactionService: TransactionService
+        + authService: AuthService
+        --
+        + ngOnInit(): void
+        + loadStats(): void
+    }
+
+    class TransactionListComponent {
+        + transactionService: TransactionService
+        + exportService: ExportService
+        --
+        + ngOnInit(): void
+        + filterTransactions(): void
+        + exportToPDF(): void
+        + exportToExcel(): void
+        + exportToCSV(): void
+    }
+
+    class LoginComponent {
+        + authService: AuthService
+        --
+        + onSubmit(): void
+        + login(): void
+    }
+
+    class UserDashboardComponent {
+        + transactionService: TransactionService
+        + authService: AuthService
+        + exportService: ExportService
+        --
+        + ngOnInit(): void
+        + loadTransactions(): void
+    }
+
+    DashboardComponent --> TransactionService : utilise
+    DashboardComponent --> AuthService : utilise
+
+    TransactionListComponent --> TransactionService : utilise
+    TransactionListComponent --> ExportService : utilise
+
+    LoginComponent --> AuthService : utilise
+
+    UserDashboardComponent --> TransactionService : utilise
+    UserDashboardComponent --> AuthService : utilise
+    UserDashboardComponent --> ExportService : utilise
+}
+
+' ====================================
+' NOTES ET LÉGENDES
+' ====================================
+
+note right of TransactionService
+  Service injectable qui gère
+  les opérations CRUD sur les
+  transactions. Utilise des données
+  mock pour la démonstration.
+end note
+
+note right of AuthService
+  Service d'authentification avec
+  support SSR (Server-Side Rendering).
+  Gère les sessions utilisateur et
+  les rôles (Admin/User).
+end note
+
+note right of ExportService
+  Service d'export multi-format:
+  - PDF (jsPDF + autoTable)
+  - Excel (XLSX)
+  - CSV (UTF-8 avec BOM)
+end note
+
+note top of Transaction
+  Interface principale représentant
+  une transaction avec:
+  - Devises africaines (XOF, XAF, GNF)
+  - Méthodes de paiement locales
+  - Statuts et types variés
+end note
+
+@enduml
