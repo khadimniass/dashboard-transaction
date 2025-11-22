@@ -182,6 +182,38 @@ Page de connexion avec formulaire réactif
 #### `UserDashboardComponent`
 Dashboard utilisateur simple avec exports
 
+#### `TransactionDetailComponent`
+**Responsabilités** :
+- Affichage détaillé d'une transaction unique
+- Récupération de transaction par référence depuis l'URL
+- Formatage des statuts et types pour affichage
+- Navigation retour vers le dashboard
+
+**Route** : `/admin/dashboard/:reference`
+
+**Propriétés principales** :
+```typescript
+transaction: Transaction | null  // Transaction affichée
+loading: boolean                 // État de chargement
+notFound: boolean                // Indicateur si transaction non trouvée
+```
+
+**Méthodes principales** :
+```typescript
+ngOnInit(): void                                      // Initialise et charge la transaction
+loadTransaction(reference: string): void              // Charge par référence
+getStatusClass(status: TransactionStatus): string     // CSS class pour statut
+getTypeClass(type: TransactionType): string           // CSS class pour type
+getStatusLabel(status: TransactionStatus): string     // Label français pour statut
+getTypeLabel(type: TransactionType): string           // Label français pour type
+goBack(): void                                        // Retour au dashboard
+```
+
+**Dépendances** :
+- `TransactionService` - Pour récupérer les données
+- `ActivatedRoute` - Pour lire le paramètre de route
+- `Router` - Pour la navigation
+
 ---
 
 ## 🔗 Relations Entre les Classes

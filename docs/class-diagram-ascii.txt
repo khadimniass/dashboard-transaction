@@ -169,6 +169,35 @@
                            │ • ExportService              │
                            └──────────────────────────────┘
 
+┌──────────────────────────────────────────────────────────────┐
+│  TransactionDetailComponent                                  │
+├──────────────────────────────────────────────────────────────┤
+│ + transaction: Transaction | null                            │
+│ + loading: boolean                                           │
+│ + notFound: boolean                                          │
+│ - route: ActivatedRoute                                      │
+│ - router: Router                                             │
+│ - transactionService: TransactionService                     │
+├──────────────────────────────────────────────────────────────┤
+│ + ngOnInit(): void                                           │
+│ + loadTransaction(reference: string): void                   │
+│ + getStatusClass(status: TransactionStatus): string          │
+│ + getTypeClass(type: TransactionType): string                │
+│ + getStatusLabel(status: TransactionStatus): string          │
+│ + getTypeLabel(type: TransactionType): string                │
+│ + goBack(): void                                             │
+├──────────────────────────────────────────────────────────────┤
+│ Uses:                                                        │
+│ • TransactionService (récupération de données)               │
+│ • Transaction (affichage détaillé)                           │
+│ • TransactionStatus (formatage)                              │
+│ • TransactionType (formatage)                                │
+│ • ActivatedRoute (paramètre :reference)                      │
+│ • Router (navigation)                                        │
+├──────────────────────────────────────────────────────────────┤
+│ Route: /admin/dashboard/:reference                           │
+└──────────────────────────────────────────────────────────────┘
+
 
 ╔══════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                   LÉGENDE                                                ║

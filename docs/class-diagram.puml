@@ -199,6 +199,23 @@ package "Components" LIGHTPINK {
         + loadTransactions(): void
     }
 
+    class TransactionDetailComponent {
+        + transaction: Transaction | null
+        + loading: boolean
+        + notFound: boolean
+        - route: ActivatedRoute
+        - router: Router
+        - transactionService: TransactionService
+        --
+        + ngOnInit(): void
+        + loadTransaction(reference: string): void
+        + getStatusClass(status: TransactionStatus): string
+        + getTypeClass(type: TransactionType): string
+        + getStatusLabel(status: TransactionStatus): string
+        + getTypeLabel(type: TransactionType): string
+        + goBack(): void
+    }
+
     DashboardComponent --> TransactionService : utilise
     DashboardComponent --> AuthService : utilise
 
@@ -210,6 +227,11 @@ package "Components" LIGHTPINK {
     UserDashboardComponent --> TransactionService : utilise
     UserDashboardComponent --> AuthService : utilise
     UserDashboardComponent --> ExportService : utilise
+
+    TransactionDetailComponent --> TransactionService : utilise
+    TransactionDetailComponent ..> Transaction : affiche
+    TransactionDetailComponent ..> TransactionStatus : formate
+    TransactionDetailComponent ..> TransactionType : formate
 }
 
 ' ====================================
@@ -243,6 +265,19 @@ note top of Transaction
   - Devises africaines (XOF, XAF, GNF)
   - Méthodes de paiement locales
   - Statuts et types variés
+end note
+
+note bottom of TransactionDetailComponent
+  Composant de détails affichant
+  une transaction complète.
+  Accessible via la route:
+  /admin/dashboard/:reference
+
+  Fonctionnalités:
+  - Affichage détaillé d'une transaction
+  - Récupération par référence
+  - Formatage des statuts/types
+  - Navigation retour
 end note
 
 @enduml
